@@ -1,0 +1,8 @@
+# Dependency CHỈ cần cho GUI desktop `agent-gui` (docs/gui_implementation_plan.md
+# Phase 1). PySide6 KHÔNG nằm trong requirements.txt gốc để CLI headless
+# (agent chat/ask/...) không bị buộc cài Qt. Tương đương extra `pip install
+# -e .[gui]` khai báo trong pyproject.toml.
+#
+# Cài: pip install -r requirements-gui.txt
+
+PySide6==6.11.2

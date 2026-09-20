@@ -1,0 +1,14 @@
+.env
+.env.example
+__pycache__/
+*.pyc
+
+# Chỉ DB RAG trong package là artifact cần theo dõi để build từ clone sạch.
+data/user.db
+*.db
+!src/agent/resources/rag/default.db
+dist/
+
+# Kết quả eval sinh ra khi chạy evals/run_eval.py (Giai đoạn 7) — giữ lại thư mục
+# (results/.gitkeep) nhưng không commit từng file kết quả cụ thể.
+evals/results/*.json

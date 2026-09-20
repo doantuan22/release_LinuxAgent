@@ -1,0 +1,58 @@
+[
+  {
+    "id": "systemctl-co-ban",
+    "title": "Quản lý service bằng systemctl",
+    "summary": "systemctl là công cụ chính để quản lý service dưới systemd: 'systemctl start/stop/restart <tên>' điều khiển trạng thái chạy ngay lúc đó, còn 'systemctl enable/disable <tên>' quyết định service có tự khởi động cùng hệ thống hay không — hai khái niệm này độc lập với nhau. 'systemctl status <tên>' cho biết cả trạng thái active/inactive lẫn vài dòng log gần nhất. Hầu hết thao tác ghi (start/stop/enable) cần quyền root, riêng xem status thì không cần.",
+    "source_url": "https://wiki.archlinux.org/title/Systemd",
+    "license": "GFDL-1.3",
+    "distro_id": null
+  },
+  {
+    "id": "journalctl-doc-log",
+    "title": "Đọc log hệ thống bằng journalctl",
+    "summary": "journalctl đọc log tập trung của systemd (journal), thay cho việc dò từng file text trong /var/log trên các distro dùng systemd. 'journalctl -u <service>' lọc log theo đúng một service, '-f' theo dõi log realtime kiểu tail -f, '-n <số dòng>' giới hạn số dòng gần nhất. Log mặc định có thể chỉ lưu trong RAM (mất sau khi tắt máy) hoặc lưu trên đĩa tùy cấu hình Storage= trong journald.conf.",
+    "source_url": "https://wiki.archlinux.org/title/Systemd/Journal",
+    "license": "GFDL-1.3",
+    "distro_id": null
+  },
+  {
+    "id": "etc-fstab-cau-truc",
+    "title": "Cấu trúc file /etc/fstab",
+    "summary": "/etc/fstab định nghĩa các filesystem được mount tự động lúc khởi động, mỗi dòng gồm 6 trường: thiết bị (nên dùng UUID thay vì /dev/sdaX vì tên thiết bị có thể đổi giữa các lần boot), điểm mount, loại filesystem, tùy chọn mount, cờ dump, và thứ tự fsck. Sai cú pháp trong fstab có thể khiến hệ thống không boot được vào chế độ bình thường, nên luôn kiểm tra bằng 'mount -a' trước khi reboot sau khi sửa file này.",
+    "source_url": "https://wiki.archlinux.org/title/Fstab",
+    "license": "GFDL-1.3",
+    "distro_id": null
+  },
+  {
+    "id": "apt-ubuntu-co-ban",
+    "title": "Quản lý gói bằng apt trên Ubuntu/Debian",
+    "summary": "apt là công cụ package management mức cao trên Debian/Ubuntu, gộp các chức năng thường dùng của apt-get và apt-cache vào một lệnh: 'apt update' làm mới danh sách gói, 'apt install <tên>' cài đặt, 'apt search <từ khóa>' tìm gói theo tên/mô tả, 'apt upgrade' nâng cấp toàn bộ gói đã cài. Gói .deb được quản lý qua dpkg ở tầng dưới; apt chủ yếu lo việc giải quyết dependency và tải gói từ repository.",
+    "source_url": "https://documentation.ubuntu.com/server/how-to/software/package-management/",
+    "license": "CC-BY-SA-3.0",
+    "distro_id": "ubuntu"
+  },
+  {
+    "id": "dnf-fedora-co-ban",
+    "title": "Quản lý gói bằng dnf trên Fedora/RHEL",
+    "summary": "dnf là package manager mặc định của Fedora/RHEL từ khi thay thế yum, dùng cú pháp tương tự: 'dnf install <tên>', 'dnf search <từ khóa>', 'dnf remove <tên>', 'dnf update' để nâng cấp hệ thống. dnf quản lý gói .rpm và tự động giải quyết dependency qua metadata repository, dùng thư viện libsolv nên tốc độ resolve nhanh hơn yum đời cũ.",
+    "source_url": "https://docs.fedoraproject.org/en-US/quick-docs/dnf/",
+    "license": "CC-BY-SA-4.0",
+    "distro_id": "fedora"
+  },
+  {
+    "id": "pacman-arch-co-ban",
+    "title": "Quản lý gói bằng pacman trên Arch Linux",
+    "summary": "pacman là package manager của Arch Linux: '-S' để cài ('pacman -S <tên>'), '-Ss' để tìm theo từ khóa, '-Syu' để đồng bộ danh sách gói và nâng cấp toàn hệ thống cùng lúc. Arch dùng mô hình rolling release nên khuyến nghị luôn upgrade toàn bộ bằng -Syu thay vì từng gói lẻ, để tránh partial upgrade gây lỗi dependency. '-R' gỡ gói, '-Rs' gỡ kèm dependency không còn ai dùng.",
+    "source_url": "https://wiki.archlinux.org/title/Pacman",
+    "license": "GFDL-1.3",
+    "distro_id": "arch"
+  },
+  {
+    "id": "df-du-dung-luong-dia",
+    "title": "Kiểm tra dung lượng đĩa đúng cách với df và du",
+    "summary": "'df -h' cho biết dung lượng còn trống/đã dùng theo từng filesystem đã mount (đơn vị dễ đọc nhờ cờ -h), là cách đúng để trả lời câu hỏi 'ổ đĩa còn bao nhiêu chỗ trống'. 'du -sh <thư mục>' lại đo dung lượng thực sự bị chiếm bởi nội dung của một thư mục cụ thể — hai lệnh trả lời hai câu hỏi khác nhau và có thể cho số liệu lệch nhau, ví dụ file đã xóa nhưng vẫn bị một process giữ file descriptor sẽ vẫn tính vào df nhưng không còn xuất hiện trong du.",
+    "source_url": "https://www.gnu.org/software/coreutils/manual/html_node/df-invocation.html",
+    "license": "GFDL-1.3",
+    "distro_id": null
+  }
+]

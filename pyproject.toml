@@ -1,0 +1,71 @@
+[build-system]
+requires = ["hatchling>=1.32.0,<2.0.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "linux-agent"
+version = "0.1.0"
+description = "AI agent hỗ trợ Linux có khả năng hành động thật trên máy"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "openai>=3.8.0,<4.0.0",
+    "anthropic>=1.4.0,<2.0.0",
+    "python-dotenv>=1.2.3,<2.0.0",
+    "pyyaml>=6.0.3,<7.0.0",
+    "psutil>=7.2.2,<8.0.0",
+    "pydantic>=2.13.5,<3.0.0",
+    "tenacity>=9.1.4,<10.0.0",
+    "tiktoken>=0.14.0,<1.0.0",
+    "platformdirs>=4.11.8,<5.0.0",
+    "typer>=0.27.2,<1.0.0",
+    "rich>=15.0.0,<16.0.0",
+]
+
+[project.urls]
+Repository = "https://github.com/doantuan22/Linux_Agent"
+Issues = "https://github.com/doantuan22/Linux_Agent/issues"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.1.1,<10.0.0",
+    "pytest-mock>=3.15.1,<4.0.0",
+    "build>=1.6.0,<2.0.0",
+    "hatchling>=1.32.0,<2.0.0",
+]
+gui = [
+    "PySide6>=6.11.2,<7.0.0",
+]
+
+[project.scripts]
+agent = "agent.cli:main"
+agent-gui = "agent.gui.app:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agent"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"src/agent/resources/providers.json" = "agent/resources/providers.json"
+"src/agent/resources/default_docs_seed.json" = "agent/resources/default_docs_seed.json"
+"src/agent/resources/rag/default.db" = "agent/resources/rag/default.db"
+"src/agent/resources/resource_manifest.json" = "agent/resources/resource_manifest.json"
+
+[tool.hatch.build.targets.sdist.force-include]
+"src/agent/resources/providers.json" = "src/agent/resources/providers.json"
+"src/agent/resources/default_docs_seed.json" = "src/agent/resources/default_docs_seed.json"
+"src/agent/resources/rag/default.db" = "src/agent/resources/rag/default.db"
+"src/agent/resources/resource_manifest.json" = "src/agent/resources/resource_manifest.json"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

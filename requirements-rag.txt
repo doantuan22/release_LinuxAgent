@@ -1,0 +1,9 @@
+# Dependency CHỈ cần khi bật embedding_enabled=True (Giai đoạn 5 RAG).
+# sentence-transformers kéo theo torch (~1.3GB+) — KHÔNG nằm trong requirements.txt
+# gốc để tránh làm chậm/treo môi trường không cần tìm kiếm vector (agent vẫn chạy
+# tốt chỉ với FTS5/BM25 nếu không cài file này).
+#
+# Cài: pip install -r requirements-rag.txt
+
+sqlite-vec>=0.1
+sentence-transformers>=3.0

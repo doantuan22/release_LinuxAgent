@@ -1,0 +1,9 @@
+.git/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+data/default.db
+data/user.db
+evals/results/*.json

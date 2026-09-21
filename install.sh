@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Linux Agent — cài đặt một lệnh (docs/technique/packaging_pipx_install_spec.md, mục 4).
+# Linux Agent — cài đặt một lệnh.
 #
 #   curl -sSL https://raw.githubusercontent.com/doantuan22/release_LinuxAgent/main/install.sh | bash
 #
@@ -18,7 +18,7 @@ PACKAGE_NAME="linux-agent"
 # Giai đoạn demo (chưa publish PyPI).
 # Sau khi publish PyPI: PACKAGE_SOURCE="${PACKAGE_NAME}". Có thể ghi đè bằng biến môi trường.
 PACKAGE_SOURCE="${PACKAGE_SOURCE:-git+https://github.com/doantuan22/release_LinuxAgent.git@v0.1.0}"
-# Phải bằng `requires-python` trong pyproject.toml (test_package_identity.py kiểm tra).
+# Phải bằng `requires-python` trong pyproject.toml.
 MIN_PYTHON="3.11"
 # ──────────────────────────────────────────────────────────────────────────────────────
 

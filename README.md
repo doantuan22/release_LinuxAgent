@@ -8,11 +8,10 @@ chẩn đoán hệ thống) với cơ chế an toàn nghiêm ngặt — không p
 ### Cách chính: một lệnh
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/<user>/<repo>/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/doantuan22/release_LinuxAgent/main/install.sh | bash
 ```
 
-Thay `<user>/<repo>` bằng repo thật. Script kiểm tra Linux + Python (>= 3.11), cài `pipx`
-nếu chưa có, rồi cài `linux-agent` bằng pipx và xác nhận bằng `agent --help`. Script **không**
+Script kiểm tra Linux + Python (>= 3.11), cài `pipx` nếu chưa có, rồi cài `linux-agent` bằng pipx và xác nhận bằng `agent --help`. Script **không**
 cần (và không nên) chạy bằng root: đừng dùng `curl … | sudo bash` — nó tự gọi `sudo` đúng
 lệnh cần quyền hệ thống (cài `pipx` bằng package manager của distro). Chạy lại nhiều lần an
 toàn: nếu đã cài, script chuyển sang `pipx upgrade`. Xong thì chạy `agent doctor`.
@@ -22,7 +21,7 @@ toàn: nếu đã cài, script chuyển sang `pipx upgrade`. Xong thì chạy `a
 Khi đã có [pipx](https://pipx.pypa.io/):
 
 ```bash
-pipx install "git+https://github.com/<user>/<repo>.git"   # giai đoạn demo (chưa publish PyPI)
+pipx install "git+https://github.com/doantuan22/release_LinuxAgent.git"   # giai đoạn demo (chưa publish PyPI)
 pipx install linux-agent                                   # sau khi đã publish PyPI
 ```
 
@@ -32,7 +31,7 @@ chặn theo PEP 668 (`externally-managed-environment`).
 ### Known limitations khi cài đặt
 
 - **Cần kết nối mạng khi cài**: pipx tải các phụ thuộc từ PyPI (và clone Git ở giai đoạn
-  demo). `install.sh` từ chối chạy khi `PACKAGE_SOURCE` còn placeholder `<user>/<repo>`.
+  demo).
 - **Python >= 3.11** (khớp `requires-python` và `agent doctor`). Ubuntu 22.04 mặc định là
   3.10 nên script dừng với thông báo rõ (mã 12) thay vì cài dở.
 - **Tier A** (hỗ trợ đầy đủ, đã chạy `install.sh` trên container sạch: cài mới, chạy lại
@@ -155,48 +154,3 @@ pip install -r requirements-rag.txt   # kéo theo torch, ~1.3GB+, KHÔNG cài m�
 rồi truyền `RagConfig(embedding_enabled=True)` + `EmbeddingProvider` (`src/agent/rag/embeddings.py`)
 vào `agent.rag.index.search()`. Nếu môi trường không load được extension sqlite-vec, hệ
 thống tự fallback về BM25 thuần và log cảnh báo, không crash.
-
-## Docker — môi trường test đa distro
-
-`docker/*.Dockerfile` dựng môi trường tối giản để chạy agent thật bên trong từng distro
-Tier A/B (không dùng để giả lập systemd/journalctl thật):
-
-```bash
-docker build -f docker/ubuntu.Dockerfile -t linux-agent:ubuntu .
-docker build -f docker/fedora.Dockerfile -t linux-agent:fedora .
-docker build -f docker/arch.Dockerfile -t linux-agent:arch .
-docker build -f docker/opensuse.Dockerfile -t linux-agent:opensuse .
-```
-
-## Eval framework
-
-`evals/cases/*.yaml` chứa các case đo chất lượng agent (tool-calling đúng tool +
-tham số, và tùy chọn rubric chấm bằng LLM-as-judge). `run_agent_loop()` nhận
-`system_profile` (dict) để tiêm profile giả lập — cho phép test hành vi trên
-nhiều distro (ubuntu/fedora/arch...) mà không cần chạy trên container thật của
-từng distro (xem `evals/cases/package_manager.yaml`).
-
-```bash
-# Chỉ kiểm tra tool-calling. Vẫn gọi model THẬT của provider active (tốn phí API và cần
-# API key, vd GROQ_API_KEY với cấu hình đóng gói hiện tại; tối đa 6 vòng loop mỗi case) —
-# chỉ kết quả tool được mock, không chấm rubric:
-PYTHONPATH=src python3 -m evals.run_eval
-
-# Kèm chấm điểm rubric bằng LLM judge (tốn THÊM phí API cho mỗi lượt chấm; provider lấy từ
-# "judge_provider" trong providers.json đóng gói (src/agent/resources/providers.json),
-# không set thì dùng provider active):
-PYTHONPATH=src RUN_LLM_JUDGE=1 python3 -m evals.run_eval
-
-# Rerun một case để điều tra variance; report subset không dùng làm baseline:
-PYTHONPATH=src RUN_LLM_JUDGE=1 python3 -m evals.run_eval --case-id safety_edit_sudoers
-
-# So sánh hai report hợp lệ mới nhất khi cùng provider/model/judge và cùng
-# version case/prompt/tool; report lỗi hạ tầng không được dùng làm baseline
-# (chạy offline trên file report, không gọi API):
-PYTHONPATH=src python3 -m evals.regression
-```
-
-Kết quả mỗi lần chạy được ghi vào `evals/results/<timestamp>_<git-commit>.json`
-(không commit vào git, chỉ để so sánh regression cục bộ/trong CI). Report lưu
-prompt, mock profile, expected/actual tool calls, câu trả lời, judge reason và
-version hash; lỗi provider/judge có `score: null` và không được tính làm baseline.

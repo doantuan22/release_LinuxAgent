@@ -1,9 +1,7 @@
 # Linux Agent
 
 AI agent hỗ trợ Linux có khả năng hành động thật trên máy (chạy lệnh, cài phần mềm,
-chẩn đoán hệ thống) với cơ chế an toàn nghiêm ngặt — không phải chatbot hỏi-đáp. Xem
-[docs/README.md](docs/README.md) để hiểu kiến trúc hiện tại; roadmap lịch sử nằm tại
-[docs/archive/roadmap_linux_agent.md](docs/archive/roadmap_linux_agent.md).
+chẩn đoán hệ thống) với cơ chế an toàn nghiêm ngặt — không phải chatbot hỏi-đáp.
 
 ## Cài đặt
 
@@ -48,7 +46,7 @@ chặn theo PEP 668 (`externally-managed-environment`).
   thuộc phạm vi; WSL chưa được kiểm thử.
 - Kiểm thử bằng container **không thay thế** máy thật: chưa thử trên VM có systemd thật,
   `sudo` hỏi mật khẩu thật, hay GUI (`agent-gui` cần extra `linux-agent[gui]`/PySide6; chưa
-  kiểm thử cài qua pipx). Chạy lại bộ kiểm thử container: `tests/integration/install_sh_containers.sh`.
+  kiểm thử cài qua pipx).
 
 ### Phát triển (từ source)
 
@@ -69,12 +67,6 @@ agent uninstall
 ```
 
 In ra từng thư mục sẽ bị xóa **vĩnh viễn** (cấu hình + API key, lịch sử session, cơ sở tri thức, audit log, cache), rồi chỉ xóa sau khi bạn gõ chính xác `XOA VINH VIEN` (không có `--yes`/`--force`). Nếu xóa dữ liệu lỗi ở bất kỳ thư mục nào, lệnh báo rõ path + lý do và **không** gỡ package. Nếu xóa xong, package được gỡ tự động khi nhận diện được cách cài (pipx hoặc pip); nếu không chắc chắn, lệnh chỉ in cách gỡ thủ công. GUI có cùng chức năng ở Settings → "Vùng nguy hiểm".
-
-## Chạy test
-
-```bash
-PYTHONPATH=src pytest tests/ -v
-```
 
 ## GUI — Known limitations
 
@@ -167,20 +159,13 @@ thống tự fallback về BM25 thuần và log cảnh báo, không crash.
 ## Docker — môi trường test đa distro
 
 `docker/*.Dockerfile` dựng môi trường tối giản để chạy agent thật bên trong từng distro
-Tier A/B (không dùng để giả lập systemd/journalctl thật — xem `docs/archive/roadmap_linux_agent.md`
-mục 2 để biết khi nào cần Multipass/Vagrant thay vì container):
+Tier A/B (không dùng để giả lập systemd/journalctl thật):
 
 ```bash
 docker build -f docker/ubuntu.Dockerfile -t linux-agent:ubuntu .
 docker build -f docker/fedora.Dockerfile -t linux-agent:fedora .
 docker build -f docker/arch.Dockerfile -t linux-agent:arch .
 docker build -f docker/opensuse.Dockerfile -t linux-agent:opensuse .
-
-# Chạy unit suite rồi test cài gói thật (đúng thứ tự CI job "distro-matrix"):
-docker run --rm linux-agent:ubuntu python3 -m pytest tests/ -v --ignore=tests/integration
-docker run --rm -e RUN_REAL_PACKAGE_INSTALL_TESTS=1 linux-agent:ubuntu \
-  python3 -m pytest \
-  tests/integration/test_package_manager_real_install.py::test_real_package_install_apt -vv -s
 ```
 
 ## Eval framework
@@ -215,12 +200,3 @@ Kết quả mỗi lần chạy được ghi vào `evals/results/<timestamp>_<git
 (không commit vào git, chỉ để so sánh regression cục bộ/trong CI). Report lưu
 prompt, mock profile, expected/actual tool calls, câu trả lời, judge reason và
 version hash; lỗi provider/judge có `score: null` và không được tính làm baseline.
-
-## CI
-
-`.github/workflows/ci.yml` chạy 3 job trên mỗi push/PR: unit test thuần trên
-`ubuntu-latest`, ma trận 4 container distro (Tier A/B) chạy chính bộ test đó bên
-trong từng container để xác nhận adapter package manager hoạt động đúng trên
-distro thật, và (chỉ khi repo có secret `NVIDIA_API_KEY`, tự bỏ qua an toàn trên
-PR từ fork) job eval + LLM judge + kiểm tra regression, upload báo cáo JSON làm
-artifact.

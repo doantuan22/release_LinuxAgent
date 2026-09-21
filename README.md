@@ -7,6 +7,10 @@ chẩn đoán hệ thống) với cơ chế an toàn nghiêm ngặt — không p
 
 ### Cách chính: một lệnh
 
+Yêu cầu trước khi chạy: `git` và `python3 >= 3.11` đã có sẵn trên máy (Ubuntu:
+`sudo apt-get install -y git python3 python3-venv python3-pip`). `install.sh` sẽ tự cài
+`pipx` nếu chưa có, nhưng không tự cài git/python3.
+
 ```bash
 curl -sSL https://raw.githubusercontent.com/doantuan22/release_LinuxAgent/main/install.sh | bash
 ```
